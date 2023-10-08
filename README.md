@@ -28,9 +28,13 @@ Infer objects from the uploaded image and get the inferenced image.
 
 - **Input:**
   - **file**: The image file you want to infer.
+
+![image](images/pexels-kaique-rocha-109919.jpg)
   
 - **Output:** 
   - The inferenced image file.
+
+![image](images/inferenced_pexels-kaique-rocha-109919.jpg)
 
 ## Example
 
