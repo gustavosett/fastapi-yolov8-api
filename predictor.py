@@ -1,25 +1,27 @@
+import cv2
+import numpy as np
 from ultralytics import YOLO
-from PIL import Image
 
 class ImageInferencer:
     def __init__(self):
         # initiate model
         self.model = YOLO("yolov8x")
     
-    def __draw_detection(self, results, path):
-        for result in results:
-            # plot results
-            im_array = result.plot()
-            # turns BGR to RGB
-            im = Image.fromarray(im_array[..., ::-1])
-            # save
-            im.save(path)
+    def inference_image(self, image_bytes) -> bytes | None:
+        nparr = np.frombuffer(image_bytes, np.uint8)
+        img_np = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
         
-    def inference_image(self, path, new_path):
         # inference image
-        results = self.model(path)
+        results = self.model(img_np)
         
-        # plot frame
-        plotted_frame = self.__draw_detection(results, new_path)
+        # get the first result
+        result = results[0]
         
-        return plotted_frame
+        # plot results
+        im_array = result.plot()
+        
+        # encode the annotated image back to bytes
+        success, encoded_image = cv2.imencode('.jpg', im_array)
+        if not success:
+            return None
+        return encoded_image.tobytes()

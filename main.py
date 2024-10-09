@@ -1,28 +1,18 @@
+import io
 from fastapi import FastAPI, UploadFile, File
-from fastapi.responses import FileResponse
-from pathlib import Path
+from fastapi.responses import StreamingResponse
 from predictor import ImageInferencer
-import shutil
 
 # start engine
 app = FastAPI()
 model = ImageInferencer()
 
 @app.post("/inference-image")
-async def inference_uploaded_image(file: UploadFile = File()):
-    # save paths
-    path = f"{Path.cwd()}/images/{file.filename}"
-    final_path = f"{Path.cwd()}/images/inferenced_{file.filename}"
+async def inference_uploaded_image(file: UploadFile = File(...)):
+    # read the uploaded file into bytes
+    image_bytes = await file.read()
     
-    # save file
-    with open(path, "wb+") as file_object:
-        shutil.copyfileobj(file.file, file_object)
-        
     # inference image
-    model.inference_image(path, final_path)
-    
-    return FileResponse(final_path)
+    output_image_bytes = model.inference_image(image_bytes)
 
-        
-        
-    
+    return StreamingResponse(io.BytesIO(output_image_bytes), media_type="image/jpeg")
