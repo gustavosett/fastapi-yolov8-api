@@ -7,7 +7,7 @@ This project provides a simple API for image inference using FastAPI and the YOL
 To get started, you'll need to install the required packages. You can do this using pip:
 
 ```bash
-pip install fastapi[all] ultralytics PILLOW
+pip install fastapi[all] ultralytics opencv-python
 ```
 
 ## Usage
