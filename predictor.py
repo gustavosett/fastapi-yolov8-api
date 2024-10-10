@@ -2,10 +2,17 @@ import cv2
 import numpy as np
 from ultralytics import YOLO
 
-class ImageInferencer:
-    def __init__(self):
+class Singleton(object):
+  _instances = {}
+  def __new__(class_, *args, **kwargs):
+    if class_ not in class_._instances:
+        class_._instances[class_] = super(Singleton, class_).__new__(class_, *args, **kwargs)
+    return class_._instances[class_]
+
+class ImageInferencer(Singleton):
+    def __init__(self, model_version="yolov8x"):
         # initiate model
-        self.model = YOLO("yolov8x")
+        self.model = YOLO(model_version)
     
     def inference_image(self, image_bytes) -> bytes | None:
         nparr = np.frombuffer(image_bytes, np.uint8)
